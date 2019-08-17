@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#
+# Script to set authorizaton enviroment variables for AWS based on secrets stored in pass
+#
+
+set -e
+
+
+if [[ -z $1 || -z $2 ]]; then
+  printf "%s\n" "Usage: eval \$(${0##*/} <name>)" >&2
+  printf "%s\n" "" >&2
+  printf "%s\n" " The scripts expects tho following secrets are stored in the password store pass:" >&2
+  printf "%s\n" "  - <alias>/aws-access-key-id - AWS access key to obtain session token." >&2
+  printf "%s\n" "  - <alias>/aws-access-secret - AWS secret to obtain session token." >&2
+  exit 1
+fi
+
+alias=$1
+echo export AWS_ACCESS_KEY_ID=$(pass ${alias}/aws-access-key-id)
+echo export AWS_SECRET_ACCESS_KEY=$(pass ${alias}/aws-access-secret)
+
