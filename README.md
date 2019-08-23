@@ -1,20 +1,36 @@
-# AWS access key shell management
+# AWS secrets management for command line
 
-While setting up my new MacBook I found it a good moment to avoid storing AWS keys and secrets in any plane text file. Searching the internet I found several approaches. I combined a few of them so I cn now projected my keys and secrets, and use MFA for login.
+## TL:TR
+Avoid storing secrets in a plain text file. Requires console password manager [pass](https://www.passwordstore.org/).
+```bash
+source aws-auth-utils.sh
+## insert secrets
+aws-pass-insert-access-keys home
+## aws login
+aws-login home
+```
 
-## Tools
-I use [KeyBase](https://keybase.io/) for managing my GPG keys. To export / import GPG keys this blog could be helpful: https://www.elliotblackburn.com/importing-pgp-keys-from-keybase-into-gpg/
+## Avoid AWS secrets in plain text
 
-For storing secrets I use [pass](https://www.passwordstore.org/), a standard unix password manager. 
+The bash script `aws-auth-utils.sh` contain several methods to use AWS cli without storing secrets in plain text in a credentials file. It required the command line password manager [pass](https://www.passwordstore.org/). There is support for with and withoud the use of MFA.
+
+The following function are available, all support the option `-help` to see some basic help information.
+- aws-mfa-login - set shell environment for AWS using MFA.
+- aws-login - set shell environment for AWS without using MFA.
+- aws-activate-profile - activates a profile.
+- aws-deactivate-profile - deactivate a profile.
+- aws-clear - clear AWS related environment variables.
+- aws-pass-insert-access-keys - to insert access keys in pass.
+- aws-pass-insert-mfa - to insert MFA arn in pass.
+
+Due to [a bug](https://github.com/aws/aws-cli/issues/3875) in the AWS cli the `AWS_PROFILE` variable is not interpreted by the AWS cli. Therefor a `aws-activate-profile` function alias the aws command to append `--profile` for the activated profile.
 
 ## Usages
-Too handle several AWS account I use an alias per account, e.q. `home`.
-
+```bash
+source aws-auth-utils.sh
 ```
-Usage: eval $(aws-mfa <name> <token>)
 
- The scripts expects tho following secrets are stored in the password store pass:
-  - <alias>/aws-access-key-id - AWS access key to obtain session token.
-  - <alias>/aws-access-secret - AWS secret to obtain session token.
-  - <alias>/aws-mfa-arn - AWS MFA arn for two factor login.
+```bash
+aws-mfa-login home 123456
 ```
+
