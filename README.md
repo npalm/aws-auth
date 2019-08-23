@@ -26,11 +26,41 @@ The following function are available, all support the option `-help` to see some
 Due to [a bug](https://github.com/aws/aws-cli/issues/3875) in the AWS cli the `AWS_PROFILE` variable is not interpreted by the AWS cli. Therefor a `aws-activate-profile` function alias the aws command to append `--profile` for the activated profile.
 
 ## Usages
+Source the functions into your shell environment.
 ```bash
 source aws-auth-utils.sh
 ```
 
+Insert secrets for your aws accountX into pass.
 ```bash
-aws-mfa-login home 123456
+aws-pass-insert-access-keys accountX
 ```
 
+Next add the MFA device ARN to pass for the same account.
+
+```bash
+aws-pass-insert-mfa accountX
+```
+
+Now you can simply obtain an AWS session token.
+```bash
+aws-mfa-login accountX 123456
+# verify you can access your account:
+aws sts get-caller-identity
+```
+Activate profile (switch role) to access another account. Cross account access needs to be setup on AWS.
+
+A configuration like below is expected in your `~/.aws/config` file.
+```
+[profile accountY]
+region = eu-west-1
+role_arn = arn:aws:iam::123456789:role/AllowAccessFromAccountX
+credential_source = Environment
+```
+
+Now simply activate the profile to access accountY
+```bash
+aws-activate-profile accountY
+# verify you can access your account:
+aws sts get-caller-identity
+```
