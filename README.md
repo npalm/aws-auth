@@ -53,7 +53,6 @@ Activate profile (switch role) to access another account. Cross account access n
 A configuration like below is expected in your `~/.aws/config` file.
 ```
 [profile accountY]
-region = eu-west-1
 role_arn = arn:aws:iam::123456789:role/AllowAccessFromAccountX
 credential_source = Environment
 ```
