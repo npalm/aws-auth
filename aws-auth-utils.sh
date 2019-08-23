@@ -66,12 +66,21 @@ aws-auth-utils() {
     printerr "De-activate the AWS <profile>."
     printerr
   }
+
+  if [[ -z $1 || $1 == aws-mfa-devices-for-user ]] {
+    printerr "--------------------------------"
+    printerr "Usage:  aws-mfa-devices-for-user <user-name>"
+    printerr ""
+    printerr "Look up the MFA device for <user-name>."
+    printerr
+  }
+  
 }
 
 
 aws-activate-profile() {
   if [[ -z $1 || $1 = "-help" ]]; then
-    aws-auth-util aws-activate-profile && return 0
+    aws-auth-utils aws-activate-profile && return 0
   fi
   export AWS_PROFILE=$1
   alias aws='aws --profile $AWS_PROFILE'
@@ -79,7 +88,7 @@ aws-activate-profile() {
 
 aws-deactivate-profile() {
   if [[ $1 = "-help" ]]; then
-    aws-auth-util aws-deactivate-profile && return 0
+    aws-auth-utils aws-deactivate-profile && return 0
   fi
   unset AWS_PROFILE
   unalias aws
@@ -88,7 +97,7 @@ aws-deactivate-profile() {
 
 aws-login() {
   if [[ -z $1 || $1 = "-help" ]]; then
-    aws-auth-util aws-login && return 0
+    aws-auth-utils aws-login && return 0
   fi
 
   aws-clear
@@ -98,7 +107,7 @@ aws-login() {
 
 aws-mfa-login() {
   if [[ -z $1 || -z $2 || $1 = "-help" ]]; then
-    aws-auth-util aws-mfa-login && return 0
+    aws-auth-utils aws-mfa-login && return 0
   fi
 
   #aws-clear
@@ -112,7 +121,6 @@ aws-mfa-login() {
 
   if [[ ! -z $_awsSessionToken ]]; then
     expire=$(echo $_awsSessionToken | jq -r '.Credentials.Expiration')
-    echo $_awsSessionToken
     export AWS_SESSION_TOKEN=$(echo $_awsSessionToken | jq -r '.Credentials.SessionToken')
     export AWS_SECRET_ACCESS_KEY=$(echo $_awsSessionToken | jq -r '.Credentials.SecretAccessKey')
     export AWS_ACCESS_KEY_ID=$(echo $_awsSessionToken | jq -r '.Credentials.AccessKeyId')
@@ -126,7 +134,7 @@ aws-mfa-login() {
 
 aws-clear() {
   if [[ $1 = "-help" ]]; then
-    aws-auth-util aws-clear && return 0
+    aws-auth-utils aws-clear && return 0
   fi
   unset AWS_SESSION_TOKEN
   unset AWS_SECRET_ACCESS_KEY
@@ -143,15 +151,22 @@ aws-clear() {
 
 aws-pass-insert-mfa() {
   if [[ -z $1 || $1 = "-help" ]]; then
-    aws-auth-util aws-pass-insert-mfa && return 0
+    aws-auth-utils aws-pass-insert-mfa && return 0
   fi
   pass insert ${1}/aws-mfa-arn
 }
 
 aws-pass-insert-access-keys() {
   if [[ -z $1 || $1 = "-help" ]]; then
-    aws-auth-util aws-pass-insert-access-keys && return 0
+    aws-auth-utils aws-pass-insert-access-keys && return 0
   fi
   pass insert ${1}/aws-access-key-id
   pass insert ${1}/aws-access-secret
+}
+
+aws-mfa-devices-for-user() {
+  if [[ -z $1 || $1 = "-help" ]]; then
+    aws-auth-utils aws-mfa-devices-for-user && return 0
+  fi
+  echo $(aws iam list-mfa-devices --user-name $1) | jq -r '.MFADevices[].SerialNumber'
 }

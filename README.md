@@ -22,6 +22,7 @@ The following function are available, all support the option `-help` to see some
 - aws-clear - clear AWS related environment variables.
 - aws-pass-insert-access-keys - to insert access keys in pass.
 - aws-pass-insert-mfa - to insert MFA arn in pass.
+- aws-mfa-devices-for-user - list mfa devices for a user.
 
 Due to [a bug](https://github.com/aws/aws-cli/issues/3875) in the AWS cli the `AWS_PROFILE` variable is not interpreted by the AWS cli. Therefor a `aws-activate-profile` function alias the aws command to append `--profile` for the activated profile.
 
