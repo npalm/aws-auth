@@ -1,51 +1,55 @@
 # AWS secrets management for command line
 
+A set of bash function to handle your AWS secrets stored in pass or OSX Keychain.
+
 ## TL:TR
-Avoid storing secrets in a plain text file. Requires console password manager [pass](https://www.passwordstore.org/).
+Avoid storing secrets in a plain text file. Requires console password manager [pass](https://www.passwordstore.org/) or OSX Keychain.
 ```bash
 source aws-auth-utils.sh
 ## insert secrets
-aws-pass-insert-access-keys home
+aws-auth-create-secret-access-keys home
 ## aws login
-aws-login home
+aws-auth-login home
 ```
 
 ## Avoid AWS secrets in plain text
 
-The bash script `aws-auth-utils.sh` contain several methods to use AWS cli without storing secrets in plain text in a credentials file. It required the command line password manager [pass](https://www.passwordstore.org/). There is support for with and withoud the use of MFA.
+The bash script `aws-auth-utils.sh` contain several methods to use AWS cli without storing secrets in plain text in a credentials file. It required the command line password manager [pass](https://www.passwordstore.org/). There is support for with and without the use of MFA. 
 
 The following function are available, all support the option `-help` to see some basic help information.
-- aws-mfa-login - set shell environment for AWS using MFA.
-- aws-login - set shell environment for AWS without using MFA.
-- aws-activate-profile - activates a profile.
-- aws-deactivate-profile - deactivate a profile.
-- aws-clear - clear AWS related environment variables.
-- aws-pass-insert-access-keys - to insert access keys in pass.
-- aws-pass-insert-mfa - to insert MFA arn in pass.
-- aws-mfa-devices-for-user - list mfa devices for a user.
+- aws-auth-mfa-login - set shell environment for AWS using MFA.
+- aws-auth-login - set shell environment for AWS without using MFA.
+- aws-auth-activate-profile - activates a profile.
+- aws-auth-deactivate-profile - deactivate a profile.
+- aws-auth-clear - clear AWS related environment variables.
+- aws-auth-create-secret-access-keys - to insert access keys in pass.
+- aws-auth-create-secret-mfa - to insert MFA arn in pass.
+- aws-auth-mfa-devices-for-user - list mfa devices for a user.
 
 Due to [a bug](https://github.com/aws/aws-cli/issues/3875) in the AWS cli the `AWS_PROFILE` variable is not interpreted by the AWS cli. Therefor a `aws-activate-profile` function alias the aws command to append `--profile` for the activated profile.
 
 ## Usages
-Source the functions into your shell environment.
+Source the functions into your shell environment. The functions requires `jq` for parsing JSON objects. For storting password by default `pass` is used. By setting the environment `AWS_AUTH_PASSWORD_STORE=OSX_KEYCHAIN` you can switch to the OSX password manager.
+
+
 ```bash
 source aws-auth-utils.sh
 ```
 
 Insert secrets for your aws accountX into pass.
 ```bash
-aws-pass-insert-access-keys accountX
+aws-auth-create-secret-access-keys accountX
 ```
 
 Next add the MFA device ARN to pass for the same account.
 
 ```bash
-aws-pass-insert-mfa accountX
+aws-auth-create-secret-mfa accountX
 ```
 
 Now you can simply obtain an AWS session token.
 ```bash
-aws-mfa-login accountX 123456
+aws-auth-mfa-login accountX 123456
 # verify you can access your account:
 aws sts get-caller-identity
 ```
@@ -60,7 +64,7 @@ credential_source = Environment
 
 Now simply activate the profile to access accountY
 ```bash
-aws-activate-profile accountY
+aws-auth-activate-profile accountY
 # verify you can access your account:
 aws sts get-caller-identity
 ```
