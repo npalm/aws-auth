@@ -14,7 +14,7 @@ aws-auth-login home
 
 ## Avoid AWS secrets in plain text
 
-The bash script `aws-auth-utils.sh` contain several methods to use AWS cli without storing secrets in plain text in a credentials file. It required the command line password manager [pass](https://www.passwordstore.org/). There is support for with and without the use of MFA. 
+The bash script `aws-auth-utils.sh` contain several methods to use AWS cli without storing secrets in plain text in a credentials file. It required the command line password manager [pass](https://www.passwordstore.org/) or OSX Keychain. There is support for with and without the use of MFA. 
 
 The following function are available, all support the option `-help` to see some basic help information.
 - aws-auth-mfa-login - set shell environment for AWS using MFA.
@@ -22,8 +22,8 @@ The following function are available, all support the option `-help` to see some
 - aws-auth-activate-profile - activates a profile.
 - aws-auth-deactivate-profile - deactivate a profile.
 - aws-auth-clear - clear AWS related environment variables.
-- aws-auth-create-secret-access-keys - to insert access keys in pass.
-- aws-auth-create-secret-mfa - to insert MFA arn in pass.
+- aws-auth-create-secret-access-keys - to insert access keys in the password store.
+- aws-auth-create-secret-mfa - to insert MFA arn in the password store.
 - aws-auth-mfa-devices-for-user - list mfa devices for a user.
 
 Due to [a bug](https://github.com/aws/aws-cli/issues/3875) in the AWS cli the `AWS_PROFILE` variable is not interpreted by the AWS cli. Therefor a `aws-activate-profile` function alias the aws command to append `--profile` for the activated profile.
