@@ -106,14 +106,13 @@ aws-mfa-login() {
   export AWS_SECRET_ACCESS_KEY=$(pass ${1}/aws-access-secret)
 
   _mfaSerialNumber=$(pass ${1}/aws-mfa-arn)
-
-  if [[ ! -z $mfaSerialNumber || ! -z $token ]]; then
-    export _awsSessionToken=$(aws sts get-session-token --serial-number $mfaSerialNumber --token-code $2)
+  if [[ ! -z $_mfaSerialNumber || ! -z $token ]]; then
+    export _awsSessionToken=$(aws sts get-session-token --serial-number $_mfaSerialNumber --token-code $2)
   fi
 
   if [[ ! -z $_awsSessionToken ]]; then
     expire=$(echo $_awsSessionToken | jq -r '.Credentials.Expiration')
-
+    echo $_awsSessionToken
     export AWS_SESSION_TOKEN=$(echo $_awsSessionToken | jq -r '.Credentials.SessionToken')
     export AWS_SECRET_ACCESS_KEY=$(echo $_awsSessionToken | jq -r '.Credentials.SecretAccessKey')
     export AWS_ACCESS_KEY_ID=$(echo $_awsSessionToken | jq -r '.Credentials.AccessKeyId')
