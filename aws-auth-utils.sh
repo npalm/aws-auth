@@ -3,48 +3,47 @@
 printerr() { printf "%s\n" "$*" >&2; }
 
 aws-auth-check-tools() {
-
   ($* &> /dev/null && echo 1 ) || { printerr "$1 not installed" ; return 0 }
 }
 
 aws-auth-utils() {
   if [[ -z $1 || $1 == aws-auth-mfa-login ]] {
     printerr "-------------------------------------"
-    printerr "Usage:  aws-auth-mfa-login <path> <token>"
+    printerr "Usage:  aws-auth-mfa-login <alias> <token>"
     printerr ""
     printerr "This function creates an AWS MFA session based on secrets and MFA arn stored in the password manager. After creating a session via AWS STS the following vars are set in the environment: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_SESSION_TOKEN"
-    printerr "  - <path>/aws-access-key-id - AWS access key to set."
-    printerr "  - <path>/aws-access-secret - AWS secret to set."
-    printerr "  - <path>/aws-mfa-arn - AWS MFA arn for two factor login."
+    printerr "  - <alias>/aws-access-key-id - AWS access key to set."
+    printerr "  - <alias>/aws-access-secret - AWS secret to set."
+    printerr "  - <alias>/aws-mfa-arn - AWS MFA arn for two factor login."
     printerr
   }
 
   if [[ -z $1 || $1 == aws-auth-login ]] {
     printerr "--------------------------"
-    printerr "Usage:  aws-auth-login} <path>"
+    printerr "Usage:  aws-auth-login} <alias>"
     printerr ""
     printerr " This sets environment AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY based on stored secrets in the password store pass." 
-    printerr "  - <path>/aws-access-key-id - AWS access key to set."
-    printerr "  - <path>/aws-access-secret - AWS secret to set."
+    printerr "  - <alias>/aws-access-key-id - AWS access key to set."
+    printerr "  - <alias>/aws-access-secret - AWS secret to set."
     printerr
   }
 
   if [[ -z $1 || $1 == aws-auth-create-secret-access-keys ]] {
     printerr "--------------------------------------------"
-    printerr "Usage:  aws-auth-create-secret-access-keys} <path>"
+    printerr "Usage:  aws-auth-create-secret-access-keys} <alias>"
     printerr ""
     printerr "Inserts entries into aws-auth-get-secret for:"
-    printerr "  - <path>/aws-access-key-id"
-    printerr "  - <path>/aws-access-secret"
+    printerr "  - <alias>/aws-access-key-id"
+    printerr "  - <alias>/aws-access-secret"
     printerr
   }
 
   if [[ -z $1 || $1 == aws-auth-create-secret-mfa ]] {
     printerr "------------------------------------"
-    printerr "Usage:  aws-auth-create-secret-mfa <path>"
+    printerr "Usage:  aws-auth-create-secret-mfa <alias>"
     printerr ""
     printerr "Inserts entry into aws-auth-get-secret for:"
-    printerr "  - <path>/aws-mfa-arn" 
+    printerr "  - <alias>/aws-mfa-arn" 
     printerr
   }
   
