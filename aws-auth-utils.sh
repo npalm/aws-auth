@@ -123,8 +123,8 @@ aws-auth-login() {
   fi
 
   aws-auth-clear
-  export AWS_ACCESS_KEY_ID=$(aws-auth-get-secret ${alias}/aws-access-key-id)
-  export AWS_SECRET_ACCESS_KEY=$(aws-auth-get-secret ${alias}/aws-access-secret)
+  export AWS_ACCESS_KEY_ID=$(aws-auth-get-secret ${1}/aws-access-key-id)
+  export AWS_SECRET_ACCESS_KEY=$(aws-auth-get-secret ${1}/aws-access-secret)
 }
 
 aws-auth-mfa-login() {
