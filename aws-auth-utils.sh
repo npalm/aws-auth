@@ -187,10 +187,10 @@ aws-auth-mfa-login() {
   export AWS_ACCESS_KEY_ID=$(aws-auth-get-secret ${1}/aws-access-key-id)
   export AWS_SECRET_ACCESS_KEY=$(aws-auth-get-secret ${1}/aws-access-secret)
 
-  _mfaSerialNumber=$(aws-auth-get-secret ${1}/aws-mfa-arn)
+  local _mfaSerialNumber=$(aws-auth-get-secret ${1}/aws-mfa-arn)
   
   if [[ ! -z $_mfaSerialNumber || ! -z $token ]]; then
-    export _awsSessionToken=$(aws sts get-session-token --serial-number $_mfaSerialNumber --token-code $2)
+    local _awsSessionToken=$(aws sts get-session-token --serial-number $_mfaSerialNumber --token-code $2)
   fi
 
   if [[ ! -z $_awsSessionToken ]]; then
@@ -202,8 +202,6 @@ aws-auth-mfa-login() {
   else
     echo WARNING: Could not obtain session token >&1
   fi
-  unset _awsSessionToken
-  unset _mfaSerialNumber
 
 }
 
