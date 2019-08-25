@@ -1,9 +1,24 @@
-#!/usr/bin/env bash
-
 printerr() { printf "%s\n" "$*" >&2; }
 
+aws-auth-check-tool() {
+  ($* &> /dev/null ) || { printerr "$1 not installed" ; return 1 }
+}
+
 aws-auth-check-tools() {
-  ($* &> /dev/null && echo 1 ) || { printerr "$1 not installed" ; return 0 }
+  aws-auth-check-tool jq --version
+  local result=$?
+  
+  if [[ $AWS_AUTH_PASSWORD_STORE = "OSX_KEYCHAIN" ]]; then
+    aws-auth-check-tool security help
+  else 
+    aws-auth-check-tool pass --version
+  fi
+  result=$(($result + $?))
+
+  aws-auth-check-tool aws --version
+  result=$(($result + $?))
+
+  return $result
 }
 
 aws-auth-utils() {
@@ -20,7 +35,7 @@ aws-auth-utils() {
 
   if [[ -z $1 || $1 == aws-auth-login ]] {
     printerr "--------------------------"
-    printerr "Usage:  aws-auth-login} <alias>"
+    printerr "Usage:  aws-auth-login <alias>"
     printerr ""
     printerr " This sets environment AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY based on stored secrets in the password store pass." 
     printerr "  - <alias>/aws-access-key-id - AWS access key to set."
@@ -30,13 +45,25 @@ aws-auth-utils() {
 
   if [[ -z $1 || $1 == aws-auth-create-secret-access-keys ]] {
     printerr "--------------------------------------------"
-    printerr "Usage:  aws-auth-create-secret-access-keys} <alias>"
+    printerr "Usage:  aws-auth-create-secret-access-keys <alias>"
     printerr ""
     printerr "Inserts entries into aws-auth-get-secret for:"
     printerr "  - <alias>/aws-access-key-id"
     printerr "  - <alias>/aws-access-secret"
     printerr
   }
+
+  if [[ -z $1 || $1 == aws-auth-create-secrets ]] {
+    printerr "--------------------------------------------"
+    printerr "Usage:  aws-auth-create-secrets <alias>"
+    printerr ""
+    printerr "Inserts entries into aws-auth-get-secret for:"
+    printerr "  - <alias>/aws-access-key-id"
+    printerr "  - <alias>/aws-access-secret"
+    printerr "  - <alias>/aws-mfa-arn" 
+    printerr
+  }
+
 
   if [[ -z $1 || $1 == aws-auth-create-secret-mfa ]] {
     printerr "------------------------------------"
@@ -82,17 +109,29 @@ aws-auth-utils() {
 }
 
 aws-auth-get-secret() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
 
   if [[ $AWS_AUTH_PASSWORD_STORE = "OSX_KEYCHAIN" ]]; then
     echo $(security find-generic-password -a aws-auth -s $1 -w)
+  elif [[ $AWS_AUTH_PASSWORD_STORE = "LPASS" ]]; then
+    echo $(lpass show -p $1)
   else 
     echo $(pass ${1})
   fi
 }
 
 aws-auth-set-secret() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
   if [[ $AWS_AUTH_PASSWORD_STORE = "OSX_KEYCHAIN" ]]; then
     $(security add-generic-password -a aws-auth -s $1 -w)
+  elif [[ $AWS_AUTH_PASSWORD_STORE = "LPASS" ]]; then
+      printf "Enter secret for $1: "
+      read passvar
+      printf "$passvar" | \
+        lpass add --password $1 --non-interactive --sync=now
   else 
     $(pass insert ${1})
   fi
@@ -101,6 +140,9 @@ aws-auth-set-secret() {
 
 
 aws-auth-activate-profile() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
   if [[ -z $1 || $1 = "-help" ]]; then
     aws-auth-utils aws-auth-activate-profile && return 0
   fi
@@ -109,6 +151,9 @@ aws-auth-activate-profile() {
 }
 
 aws-auth-deactivate-profile() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
   if [[ $1 = "-help" ]]; then
     aws-auth-utils aws-auth-deactivate-profile && return 0
   fi
@@ -118,6 +163,9 @@ aws-auth-deactivate-profile() {
 
 
 aws-auth-login() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
   if [[ -z $1 || $1 = "-help" ]]; then
     aws-auth-utils aws-auth-login && return 0
   fi
@@ -128,6 +176,9 @@ aws-auth-login() {
 }
 
 aws-auth-mfa-login() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
   if [[ -z $1 || -z $2 || $1 = "-help" ]]; then
     aws-auth-utils aws-auth-mfa-login && return 0
   fi
@@ -157,6 +208,9 @@ aws-auth-mfa-login() {
 }
 
 aws-auth-clear() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
   if [[ $1 = "-help" ]]; then
     aws-auth-utils aws-auth-clear && return 0
   fi
@@ -173,7 +227,22 @@ aws-auth-clear() {
 }
 
 
+aws-auth-create-secrets() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
+  if [[ -z $1 || $1 = "-help" ]]; then
+    aws-auth-utils aws-auth-create-secrets && return 0
+  fi
+
+  aws-auth-create-secret-access-key $*
+  aws-auth-create-secret $*
+}
+
 aws-auth-create-secret-mfa() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
   if [[ -z $1 || $1 = "-help" ]]; then
     aws-auth-utils aws-auth-create-secret-mfa && return 0
   fi
@@ -181,6 +250,9 @@ aws-auth-create-secret-mfa() {
 }
 
 aws-auth-create-secret-access-keys() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
   if [[ -z $1 || $1 = "-help" ]]; then
     aws-auth-utils aws-auth-create-secret-access-keys && return 0
   fi
@@ -189,6 +261,9 @@ aws-auth-create-secret-access-keys() {
 }
 
 aws-auth-mfa-devices-for-user() {
+  aws-auth-check-tools
+  if [[ $? > 0 ]] ; then ; return ; fi
+
   if [[ -z $1 || $1 = "-help" ]]; then
     aws-auth-utils aws-auth-mfa-devices-for-user && return 0
   fi
