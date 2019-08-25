@@ -1,6 +1,6 @@
 # AWS secrets management for command line
 
-A set of bash/zsh function to handle your AWS secrets stored in a password store, supported stores pass, lastpass, and OSX Keychain.
+A set of bash/zsh function to handle your AWS secrets stored in a password store, supported stores pass, LastPass, and OSX Keychain.
 
 ## TL:TR
 Avoid storing secrets in a plain text file. Requires console password manager [pass](https://www.passwordstore.org/). OSX Keychain, or lastpass-cli
@@ -22,6 +22,7 @@ The following function are available, all support the option `-help` to see some
 - aws-auth-activate-profile - activates a profile.
 - aws-auth-deactivate-profile - deactivate a profile.
 - aws-auth-clear - clear AWS related environment variables.
+- aws-auth-create-secrets - to insert access keys and mfa arn in the password store.
 - aws-auth-create-secret-access-keys - to insert access keys in the password store.
 - aws-auth-create-secret-mfa - to insert MFA arn in the password store.
 - aws-auth-mfa-devices-for-user - list mfa devices for a user.
