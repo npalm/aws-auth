@@ -2,7 +2,7 @@
 
 A set of bash/zsh function to handle your AWS secrets stored in a password store, supported stores pass, LastPass, and OSX Keychain.
 
-## TL:TR
+## TL:DR
 
 Avoid storing secrets in a plain text file. Requires console password manager [pass](https://www.passwordstore.org/). OSX Keychain, or lastpass-cli
 
