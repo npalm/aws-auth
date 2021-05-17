@@ -233,8 +233,8 @@ aws-auth-create-secrets() {
     aws-auth-utils aws-auth-create-secrets && return 0
   fi
 
-  aws-auth-create-secret-access-key $*
-  aws-auth-create-secret $*
+  aws-auth-create-secret-access-keys $*
+  aws-auth-create-secret-mfa $*
 }
 
 aws-auth-create-secret-mfa() {
