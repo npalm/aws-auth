@@ -1,5 +1,5 @@
 # A guide for new users
-This documet is intended to guide a new user through the configuration of the tools environment to the point
+This document is intended to guide a new user through the configuration of the tools environment to the point
 where the AWS CLI tools can be used comfortably and securely to work with an account/role on AWS.
 
 ## Installation
@@ -18,20 +18,20 @@ you store executables.
 zsh so its: `vi ~/.zshrc`
 - Add `[[ -s "/Users/<replace with user>/bin/aws-auth/aws-auth-utils.sh" ]] && source "/Users/<replace with user>/bin/aws-auth/aws-auth-utils.sh"`
   and don't forget to replace both `<replace with user>` with your username.
-- create a new shell and verify that the script was loaded by typing `aws` and then hitting tab. When
+- create a new shell and verify that the script was loaded by typing `aws-auth` and then hitting tab. When
   installed properly a list of aws-auth commands should be listed.
 
 ### initialize pass
 - generate a gpg key pair with: `gpg --generate-key` and follow the prompts. Since the purpose of these
-  tools is to securely store secrets, put a pass frase on the key pair and remember it!
+  tools is to securely store secrets, put a pass phrase on the key pair and remember it!
 - get the public part of the key with: `gpg -k` It is the second line on the `pub` section of the listed keys.
 - use the public part of the key to initialize pass with: `pass init <public key part>`
 
 ### create secrets to login to the AWS account
 - Have your AWS console open on the IAM page for your user and switch to the `security credentials` tab,
-  we will need some of its values
+  we will need some of its values. You do not need to switch roles for this.
 - In the `Sign-in credentials` paragraph check that you have a arn configured for the `Assigned MFA device`.
-  The value listed here must be entered when prompted for the `password for <xyz>/aws-mfa-arn`
+  The value listed here (`arn:aws:iam::<Account ID>:mfa/<username>` or something similar) must be entered when prompted for the `password for <xyz>/aws-mfa-arn`
 - In the `Access keys` paragraph click the `Create...` button and click the `show` link to reveal the full secret.
   Don't close this dialog yet. The access key ID needs to be entered when prompted for `password for <xyz>/aws-access-key-id` and
   the secret needs the be entered when prompted for `password for <xyz>/aws-access-secret`
