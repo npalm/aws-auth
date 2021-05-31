@@ -9,7 +9,7 @@ you store executables.
 - clone the repo with: `git clone git@github.com:npalm/aws-auth.git` or `https://github.com/npalm/aws-auth.git`
 - install pass (see https://www.passwordstore.org/) with: `brew install pass`
 - install jq (see https://stedolan.github.io/jq/) with: `brew install jq`
-- install AWS CLI. Follow the instructions from the installation section on
+- install the latest version of AWS CLI. Follow the instructions from the installation section on
   https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html
 
 ## Configuration
