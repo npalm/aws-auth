@@ -69,3 +69,7 @@ credential_source=Environment
 - from the `~/.aws/config` file copy the line `role_arn=<*>` and on the shell prompt execute `export role_arn=<*>`
 - now execute `aws sts assume-role --role-arn "$role_arn" --duration-seconds 3600 --role-session-name "test"`
 With this command the account is setup to use the profile credentials with credentials that are valid for 1 hour.
+
+### pulling the state
+Through the command `terraform state pull > state.txt` terraform exposes the current state in the state.txt file.
+Be carefull, this file may also contain some credentials that you want to keep secret!
