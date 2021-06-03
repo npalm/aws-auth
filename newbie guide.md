@@ -66,9 +66,18 @@ credential_source=Environment
   without problems.
 
 ### login to the profile for a longer time
+We are going to change some environment variables for this, so best do this in a separate window.
 - from the `~/.aws/config` file copy the line `role_arn=<*>` and on the shell prompt execute `export role_arn=<*>`
 - now execute `aws sts assume-role --role-arn "$role_arn" --duration-seconds 3600 --role-session-name "test"`
-With this command the account is setup to use the profile credentials with credentials that are valid for 1 hour.
+From the resulting json take the AccessKeyId, SecretAccessKey and SessionToken and assign these to exported
+  environment variables AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_SESSION_TOKEN. Now you will be
+  able to run the aws cli commands without the `--profile option`.
+
+```
+export AWS_ACCESS_KEY_ID=<AccessKeyId>
+export AWS_SECRET_ACCESS_KEY=<SecretAccessKey>
+export AWS_SESSION_TOKEN=<SessionToken>
+```
 
 ### pulling the state
 Through the command `terraform state pull > state.txt` terraform exposes the current state in the state.txt file.
