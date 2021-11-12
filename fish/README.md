@@ -2,7 +2,13 @@
 
 A set of fish finctions covering the basic tools in this repository that was meant initially for bash and zsh only.
 
-## Function "aws_mfa_login"
+## Installation
+Copy fish function files from this directory to "~/.config/fish/functions/"
+```fish
+cp *.fish ~/.config/fish/functions/
+```
+
+### Function "aws_mfa_login"
 
 This function goes with argument MFA code, that is needed for your default AWS profile
 
@@ -13,7 +19,7 @@ ex.
 aws_mfa_login 456321
 ```
 
-## Function "aws-switch-to-account-with-role"
+### Function "aws-switch-to-account-with-role"
 
 This function has an argument of arn format of the role that your current AWS logged in user wants to switch to
 
