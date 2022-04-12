@@ -74,7 +74,7 @@ aws-auth-utils() {
     printerr
   }
   
-  if [[ -z $1 || $1 == aws-auth-cleare ]] {
+  if [[ -z $1 || $1 == aws-auth-clear ]] {
     printerr "------------------"
     printerr "Usage: ws-clear"
     printerr ""
@@ -149,6 +149,14 @@ aws-auth-activate-profile() {
   export AWS_PROFILE=$1
   alias aws='aws --profile $AWS_PROFILE'
 }
+
+_aws-auth-activate-profile_completions()
+{
+  COMPREPLY=($(compgen -W "$(aws configure list-profiles | sed 's/\t//')" -- "${COMP_WORDS[1]}"))
+}
+
+complete -F _aws-auth-activate-profile_completions aws-auth-activate-profile
+
 
 aws-auth-deactivate-profile() {
   aws-auth-check-tools
